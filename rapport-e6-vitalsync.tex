@@ -160,7 +160,7 @@ app.get("/api/users", (req, res) => {
 \end{lstlisting}
 
 \noindent\textbf{Extrait messages du conflit :}
-\screenshot[width=0.5\textwidth]{git-conflit-messages.png}{backend/server.js -- conflit messages}
+\screenshot[width=0.9\textwidth]{git-conflit-messages.png}{backend/server.js -- conflit messages}
 \noindent\textbf{Extrait du conflit généré (marqueurs Git):}
 \screenshot[width=0.5\textwidth]{git-conflit-marqueurs.png}{backend/server.js -- conflit}
 
@@ -183,14 +183,21 @@ app.get("/api/users", (req, res) => {
 });
 \end{lstlisting}
 \screenshot{git-merge-reussi.png}{Commit de merge réussi}
-
+\newpage
 \subsubsection*{2.c Merge vs Rebase}
 \noindent La différence entre Merge et Rebase est que Merge crée un nouveau commit qui contient les modifications des deux branches, tandis que Rebase applique les modifications de la branche cible sur la branche source.
 
 \subsubsection*{2.d Conventional Commits}
 \screenshot{git-log-conventional.png}{Historique Git montrant au moins 5 commits Conventional Commits}
 
-\noindent\textbf{Justification de la convention utilisée:} [À compléter]
+\noindent\textbf{Justification de la convention utilisée:} 
+\begin{itemize}
+    \item \textbf{feat}: Nouvelle fonctionnalité.
+    \item \textbf{fix}: Correction de bug.
+    \item \textbf{refactor}: Refactorisation du code.
+    \item \textbf{test}: Ajout de tests.
+    \item \textbf{chore}: Tâche administrative.
+\end{itemize}
 
 %% ============================================================
 \newpage
@@ -208,87 +215,255 @@ Prompt utilisé & Fournisseur & Modèle \\
 
 \subsubsection*{3.a Dockerfile back-end (multi-stage)}
 \begin{lstlisting}[language={},title=backend/Dockerfile]
-# A completer
+# Multi-stage build:
+# - Stage 1 (builder/test) installe toutes les dependances et execute les tests.
+# - Stage 2 (runtime) ne conserve que le necessaire pour l'execution en production.
+# Ce decoupage réduit la surface d'attaque et la taille de l'image finale.
+
+FROM node:20-alpine AS builder
+WORKDIR /app
+
+# Installation des dependances (inclut les devDependencies pour les tests)
+COPY package*.json ./
+RUN npm install
+
+# Copie du code puis execution des tests unitaires
+COPY . .
+RUN npm test
+
+# ---- Image finale de production ----
+FROM node:20-alpine AS runtime
+WORKDIR /app
+ENV NODE_ENV=production
+
+# Installer uniquement les dependances de production
+COPY package*.json ./
+RUN npm install --omit=dev && npm cache clean --force
+
+# Copier uniquement le code necessaire au runtime
+COPY server.js ./server.js
+
+EXPOSE 3000
+CMD ["npm", "start"]
 \end{lstlisting}
 
-\noindent\textbf{Explication du multi-stage build:} [À compléter -- pourquoi 2 stages, intérêt de chacun]
+\noindent\textbf{Explication du multi-stage build:} Le premier stage (\texttt{builder}) sert a installer toutes les dependances et a executer les tests unitaires, ce qui valide l'application pendant la phase de build. Le second stage (\texttt{runtime}) repart d'une image propre et ne conserve que les dependances de production et le code utile a l'execution, afin d'obtenir une image plus legere et plus securisee.
 
-\noindent\textbf{Justification de l'image de base:} [À compléter -- pourquoi node:20-alpine et pas node:20]
+\noindent\textbf{Justification de l'image de base:} Le choix de \texttt{node:20-alpine} permet de réduire la taille de l'image par rapport a \texttt{node:20}. Cette reduction limite le temps de transfert en CI/CD et diminue la surface d'attaque en production.
 
 \subsubsection*{3.b Commentaire explicatif (en tête du Dockerfile)}
-\noindent [Déjà intégré dans le Dockerfile ci-dessus]
+\noindent Le multi-stage build est utilisé pour réduire la taille de l'image et augmenter la sécurité. Le premier stage installe toutes les dépendances et exécute les tests unitaires, ce qui valide l'application pendant la phase de build. Le second stage ne conserve que les dépendances de production et le code utile à l'exécution, afin d'obtenir une image plus légère et plus sécurisée.
 
 \subsubsection*{3.c Fichier .dockerignore}
 \begin{lstlisting}[language={},title=.dockerignore]
-# A completer
+node_modules
+npm-debug.log*
+Dockerfile
+.dockerignore
+.git
+.gitignore
+*.md
 \end{lstlisting}
 
 \noindent\textbf{Justification des entrées:}
 \begin{itemize}
-    \item [À compléter -- justifier chaque entrée]
+    \item \texttt{node\_modules}: evite de copier des dependances locales volumineuses et potentiellement incompatibles avec l'environnement du conteneur.
+    \item \texttt{npm-debug.log*}: exclusion des logs temporaires inutiles dans l'image.
+    \item \texttt{Dockerfile} et \texttt{.dockerignore}: ces fichiers ne sont pas necessaires au runtime de l'application.
+    \item \texttt{.git} et \texttt{.gitignore}: metadata Git inutile en production et ajoutant du poids au contexte de build.
+    \item \texttt{*.md}: documentation non necessaire a l'execution de l'API.
 \end{itemize}
 
-\screenshot{docker-build-backend.png}{Build réussi du Dockerfile back-end montrant les étapes}
-\screenshot{docker-images-backend.png}{docker images montrant la taille de l'image produite}
+\screenshot{build-backend.png}{Build réussi du Dockerfile back-end montrant les étapes}
+\screenshot{images-backend.png}{docker images montrant la taille de l'image produite}
 
+
+\newpage
 \subsection{Exercice 4 -- Dockerfile du front-end (5 points)}
 \subsubsection*{Prompt}
 \begin{longtable}{p{0.52\textwidth}p{0.2\textwidth}p{0.2\textwidth}}
 \toprule
 Prompt utilisé & Fournisseur & Modèle \\
 \midrule
-À compléter & [À compléter] & [À compléter] \\
+Fais moi la configuration du Dockerfile du front-end et du fichier nginx.conf je suis en retard et je dois rendre ce rapport dans quelques heures & OpenAI & ChatGPT-5.3 \\
 \bottomrule
 \end{longtable}
 
 \subsubsection*{4.a Dockerfile front-end}
 \begin{lstlisting}[language={},title=frontend/Dockerfile]
-# A completer
+
+    FROM nginx:alpine
+
+    COPY nginx.conf /etc/nginx/conf.d/default.conf
+    COPY index.html /usr/share/nginx/html/index.html
+    
+    EXPOSE 80
+    
 \end{lstlisting}
 
-\noindent\textbf{Justification de l'image Nginx utilisée:} [À compléter]
+\noindent\textbf{Justification de l'image Nginx utilisée:} image Nginx minimale pour la simplicité et la sécurité.
 
 \subsubsection*{4.b Fichier nginx.conf}
 \begin{lstlisting}[language={},title=frontend/nginx.conf]
-# A completer
+# Configuration Nginx pour le front-end
+    server {
+        listen 80;
+        server_name _;
+    
+        root /usr/share/nginx/html;
+        index index.html;
+    
+        location / {
+            try_files $uri /index.html;
+        }
+    
+        location /api/ {
+            proxy_pass http://backend:3000;
+            proxy_http_version 1.1;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+    }
+    
 \end{lstlisting}
 
-\noindent\textbf{Explication du rôle du proxy\_pass:} [À compléter -- pourquoi les requêtes /api/* sont redirigées vers le back-end]
+\noindent\textbf{Explication du rôle du proxy\_pass:} les requêtes arrivent dans le port 80 et sont redirigées vers le back-end sur le port 3000. Ca permet de ne pas divulguer le port du back-end. Le rôle du proxy\_pass est de rediriger les requêtes vers le back-end.
 
+\newpage
 \subsection{Exercice 5 -- Docker Compose (10 points)}
 \subsubsection*{Prompt}
 \begin{longtable}{p{0.52\textwidth}p{0.2\textwidth}p{0.2\textwidth}}
 \toprule
 Prompt utilisé & Fournisseur & Modèle \\
 \midrule
-À compléter & [À compléter] & [À compléter] \\
+Fais moi la configuration minimale du docker-compose.yml, n'oublie pas les volumes persistants et les variables d'environnement viennent du fichier .env je ne veux pas de variables hardcodées & OpenAI & ChatGPT-5.3 \\
+Fais l'explications des variables d'environnement des variables d'environnement, tu expliques le role du port hote et du port conteneur. etcc Tout ca en latex et en liste à puce. & OpenAI & ChatGPT-5.3 \\
 \bottomrule
+
 \end{longtable}
 
 \subsubsection*{5.a Fichier docker-compose.yml}
 \begin{lstlisting}[language={},title=docker-compose.yml]
-# A completer
+    services:
+    backend:
+      build:
+        context: ./backend
+      container_name: vitalsync-backend
+      env_file:
+        - .env
+      environment:
+        NODE_ENV: ${NODE_ENV}
+        DB_HOST: ${DB_HOST}
+        DB_PORT: ${DB_PORT}
+        DB_NAME: ${POSTGRES_DB}
+        DB_USER: ${POSTGRES_USER}
+        DB_PASSWORD: ${POSTGRES_PASSWORD}
+      depends_on:
+        - db
+      ports:
+        - "${BACKEND_PORT}:${BACKEND_CONTAINER_PORT}"
+      networks:
+        - vitalsync-net
+  
+    frontend:
+      build:
+        context: ./frontend
+      container_name: vitalsync-frontend
+      env_file:
+        - .env
+      depends_on:
+        - backend
+      ports:
+        - "${FRONTEND_PORT}:${FRONTEND_CONTAINER_PORT}"
+      networks:
+        - vitalsync-net
+  
+    db:
+      image: postgres:16-alpine
+      container_name: vitalsync-db
+      env_file:
+        - .env
+      environment:
+        POSTGRES_DB: ${POSTGRES_DB}
+        POSTGRES_USER: ${POSTGRES_USER}
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      ports:
+        - "${POSTGRES_PORT}:${POSTGRES_CONTAINER_PORT}"
+      volumes:
+        - postgres-data:/var/lib/postgresql/data
+      networks:
+        - vitalsync-net
+  
+  networks:
+    vitalsync-net:
+      driver: bridge
+  
+  volumes:
+    postgres-data:
+  
 \end{lstlisting}
 
 \subsubsection*{5.b Réseau personnalisé (bridge)}
-\noindent [À compléter -- pourquoi un bridge dédié, avantage par rapport au réseau par défaut]
+\noindent L'avantage d'un réseau personnalisé est de pouvoir isoler les conteneurs entre eux et de ne pas avoir d'accès à l'extérieur mais aussi de pouvoir exposer seulement les ports dont on a besoin.
 
 \subsubsection*{5.c Volume persistant}
-\noindent [À compléter -- qu'est-ce qui se passe si on fait \texttt{docker-compose down} sans volume]
+\noindent Ca permet de garder les données de la base de données même si on arrête le conteneur.
 
 \subsubsection*{5.d Variables d'environnement}
 \begin{lstlisting}[language={},title=.env.example]
-# A completer
+    # ============================================================
+    # VitalSync - Variables d'environnement pour Docker Compose
+    # ============================================================
+    
+    # Environnement de l'application (development | test | production)
+    NODE_ENV=development
+    
+    # ------------------------------------------------------------
+    # Mapping des ports Frontend / Backend (HOTE:CONTENEUR)
+    # ------------------------------------------------------------
+    FRONTEND_PORT=8080
+    FRONTEND_CONTAINER_PORT=80
+    
+    BACKEND_PORT=3000
+    BACKEND_CONTAINER_PORT=3000
+    
+    # ------------------------------------------------------------
+    # Configuration PostgreSQL
+    # ------------------------------------------------------------
+    # Nom d'hôte interne du service sur le réseau Docker
+    DB_HOST=db
+    DB_PORT=5432
+    
+    # Port exposé sur l'hôte pour accéder à PostgreSQL depuis la machine locale
+    POSTGRES_PORT=5432
+    POSTGRES_CONTAINER_PORT=5432
+    
+    # Identifiants de base de données (valeurs de développement uniquement)
+    POSTGRES_DB=vitalsync
+    POSTGRES_USER=vitalsync_user
+    POSTGRES_PASSWORD=vitalsync_password
+    
 \end{lstlisting}
 
 \noindent\textbf{Justification de chaque variable:}
 \begin{itemize}
-    \item [À compléter]
+    \item \texttt{NODE\_ENV}: Environnement de l'application (development | test | production).
+    \item \texttt{FRONTEND\_PORT} et \texttt{FRONTEND\_CONTAINER\_PORT}: Mapping des ports Frontend / Backend (HOTE:CONTENEUR).
+    \item \texttt{BACKEND\_PORT} et \texttt{BACKEND\_CONTAINER\_PORT}: Mapping des ports Backend / Frontend (HOTE:CONTENEUR).
+    \item \texttt{DB\_HOST}: Nom d'hôte interne du service sur le réseau Docker.
+    \item \texttt{DB\_PORT}: Port exposé sur l'hôte pour accéder à PostgreSQL depuis la machine locale.
+    \item \texttt{POSTGRES\_DB}: Nom de la base de données.
+    \item \texttt{POSTGRES\_USER}: Nom d'utilisateur de la base de données.
+    \item \texttt{POSTGRES\_PASSWORD}: Mot de passe de la base de données.
 \end{itemize}
 
 \subsubsection*{5.e Vérification}
-\screenshot{docker-compose-up.png}{docker-compose up montrant le démarrage des 3 services}
-\screenshot{docker-ps.png}{docker ps montrant les 3 conteneurs actifs avec leurs ports}
+\screenshot[width=\textwidth,height=0.34\textheight,keepaspectratio]{docker-compose-up.png}{\texttt{docker-compose up} montrant le démarrage des 3 services}
+\screenshot[width=\textwidth,height=0.34\textheight,keepaspectratio]{conteneur-back.png}{Statut Orbstack du conteneur back-end (\texttt{vitalsync-backend}) démarré avec succès}
+\screenshot[width=\textwidth,height=0.34\textheight,keepaspectratio]{conteneur-front.png}{Statut Orbstack du conteneur front-end (\texttt{vitalsync-frontend}) opérationnel}
+\screenshot[width=\textwidth,height=0.34\textheight,keepaspectratio]{conteneur-db.png}{Statut Orbstack du conteneur base de données (\texttt{vitalsync-db}) en fonctionnement}
 
 %% ============================================================
 \newpage
@@ -299,36 +474,121 @@ Prompt utilisé & Fournisseur & Modèle \\
 \begin{longtable}{p{0.52\textwidth}p{0.2\textwidth}p{0.2\textwidth}}
 \toprule
 Prompt utilisé & Fournisseur & Modèle \\
-\midrule
-À compléter & [À compléter] & [À compléter] \\
+Fais moi le fichier de pipeline ci.yml pour la pipeline CI/CD quand je push sur la branch develop ca déclenche la pipeline CI/CD et quand je fais un PR vers la branch main ca déclenche la pipeline CI/CD & OpenAI & ChatGPT-5.3 \\
 \bottomrule
 \end{longtable}
 
-\noindent\textbf{Justification du choix GitHub Actions / GitLab CI:} [À compléter]
+\noindent\textbf{Justification du choix GitHub Actions / GitLab CI:} GitHub Actions a été retenu car le dépôt VitalSync est hébergé sur GitHub et l'intégration est native (workflows versionnés dans le dépôt, gestion des secrets intégrée, logs de jobs détaillés et interface Actions directement exploitable pour les captures demandées).
 
 \subsubsection*{6.a Fichier de pipeline}
 \begin{lstlisting}[language={},title=.github/workflows/ci.yml]
-# A completer
+name: CI-CD VitalSync
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_BACKEND: ghcr.io/${{ github.repository_owner }}/vitalsync-backend
+  IMAGE_FRONTEND: ghcr.io/${{ github.repository_owner }}/vitalsync-frontend
+
+jobs:
+  lint_tests:
+    name: Lint & Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm install
+      - name: Run ESLint
+        working-directory: backend
+        run: npm run lint
+      - name: Run backend tests
+        working-directory: backend
+        run: npm test
+
+  build_docker:
+    name: Build Docker
+    runs-on: ubuntu-latest
+    needs: lint_tests
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Log in to GHCR
+        if: github.event_name == 'push'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build backend image with SHA tag
+        run: docker build -t $IMAGE_BACKEND:${{ github.sha }} ./backend
+      - name: Build frontend image with SHA tag
+        run: docker build -t $IMAGE_FRONTEND:${{ github.sha }} ./frontend
+      - name: Push images to GHCR
+        if: github.event_name == 'push'
+        run: |
+          docker push $IMAGE_BACKEND:${{ github.sha }}
+          docker push $IMAGE_FRONTEND:${{ github.sha }}
+
+  deploy_staging:
+    name: Deploy Staging
+    runs-on: ubuntu-latest
+    needs: build_docker
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Start staging environment with Docker Compose
+        run: docker compose up -d --build
+      - name: Health check backend
+        run: |
+          for i in 1 2 3 4 5 6 7 8 9 10; do
+            if curl -fsS http://localhost:3000/health > /dev/null; then
+              echo "Health check OK"
+              exit 0
+            fi
+            sleep 5
+          done
+          docker compose logs backend
+          exit 1
+      - name: Stop staging environment
+        if: always()
+        run: docker compose down -v
 \end{lstlisting}
 
 \subsubsection*{Étape 1 -- Lint \& Tests (6 pts)}
-\noindent\textbf{Explication:} [À compléter -- que fait cette étape, pourquoi]
+\noindent\textbf{Explication:} Cette étape installe les dépendances du back-end, exécute ESLint avec une configuration basique via le fichier \texttt{eslint.config.js}, puis lance les tests unitaires Jest. Elle sécurise la qualité du code avant toute construction d'image en bloquant immédiatement la pipeline en cas d'erreur de style critique ou d'échec fonctionnel.
 
 \screenshot{pipeline-lint-tests.png}{Logs du lint et des tests}
 
 \subsubsection*{Étape 2 -- Build Docker (6 pts)}
-\noindent\textbf{Explication:} [À compléter -- que fait cette étape, pourquoi]
+\noindent\textbf{Explication:} Cette étape construit les images Docker du back-end et du front-end, puis leur applique un tag basé sur le SHA exact du commit (\texttt{\$\{\{ github.sha \}\}}). Sur les événements \texttt{push} vers \texttt{develop}, les images sont ensuite publiées dans le registry.
 
-\noindent\textbf{Justification du choix du registry:} [À compléter -- GHCR, Docker Hub ou GitLab Registry]
+\noindent\textbf{Justification du choix du registry:} GHCR (GitHub Container Registry) est choisi car il est nativement intégré à GitHub Actions, simplifie l'authentification via \texttt{GITHUB\_TOKEN}, et centralise code source et images dans le même écosystème.
 
-\noindent\textbf{Explication du tag par SHA de commit:} [À compléter -- pourquoi c'est préférable à un tag « latest »]
+\noindent\textbf{Explication du tag par SHA de commit:} Le tag SHA garantit la traçabilité complète entre une image et un commit précis. Contrairement à \texttt{latest}, il évite l'écrasement ambigu des versions, facilite les rollbacks et permet d'auditer précisément quelle version a été déployée.
 
 \screenshot{pipeline-build-docker.png}{Logs du build Docker}
 
 \subsubsection*{Étape 3 -- Déploiement staging (8 pts)}
-\noindent\textbf{Explication:} [À compléter -- que fait cette étape, pourquoi]
+\noindent\textbf{Explication:} La pipeline démarre un environnement de staging avec \texttt{docker compose up -d --build} pour simuler un déploiement automatique de test. Cette phase valide que l'application démarre réellement en conditions conteneurisées et pas seulement au niveau unitaire.
 
-\noindent\textbf{Explication du health check:} [À compléter -- comment il fonctionne, pourquoi il fait échouer la pipeline]
+\noindent\textbf{Explication du health check:} Un contrôle HTTP est exécuté sur \texttt{http://localhost:3000/health} avec plusieurs tentatives. Si aucune réponse valide n'est obtenue, la commande retourne un code d'erreur non nul (\texttt{exit 1}), ce qui fait échouer le job et donc toute la pipeline. Ce mécanisme évite de considérer un déploiement comme réussi alors que le service n'est pas opérationnel.
 
 \screenshot{pipeline-deploy-staging.png}{Logs du déploiement staging}
 
