@@ -1,0 +1,414 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{geometry}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{url}
+\Urlmuskip=0mu plus 3mu
+
+\geometry{margin=1.8cm}
+\setlist[itemize]{leftmargin=*,itemsep=0.35em}
+\setlist[enumerate]{leftmargin=*,itemsep=0.35em}
+\renewcommand{\arraystretch}{1.6}
+
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{gray!8},
+    xleftmargin=0.5em,
+    framexleftmargin=0.5em,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    keywordstyle=\color{blue!70},
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{orange!80!black},
+    showstringspaces=false,
+    tabsize=2
+}
+
+\title{E6 -- Chaîne CI/CD conteneurisée\\\large Rapport technique}
+\author{Anonyme}
+\date{\today}
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    {\Large EFREI -- Épreuve E6\par}
+    \vspace{0.6cm}
+    {\LARGE \textbf{Chaîne CI/CD conteneurisée}\par}
+    \vspace{0.4cm}
+    {\large Module: Projet Intégration et Déploiement Continus\par}
+    \vspace{1.2cm}
+    {\Large \textbf{Rapport de rendu}\par}
+    \vfill
+    {\large Date: \today\par}
+    \vspace{0.3cm}
+    {\large Mention: \textbf{Anonyme}\par}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+\section*{Prompt initial}
+\addcontentsline{toc}{section}{Prompt initial}
+\begin{quote}
+Refait le même squelette que E5 mais cette fois pour E6 s'il te plaît.
+\end{quote}
+
+%% ============================================================
+\newpage
+\section{Partie 1 -- Git et gestion de versions (20 points)}
+
+\subsection{Exercice 1 -- Initialisation et structuration du dépôt (8 points)}
+\subsubsection*{Prompt}
+\begin{longtable}{p{0.52\textwidth}p{0.2\textwidth}p{0.2\textwidth}}
+\toprule
+Prompt utilisé & Fournisseur & Modèle \\
+\midrule
+À compléter & [À compléter] & [À compléter] \\
+\bottomrule
+\end{longtable}
+
+\subsubsection*{1.a Dépôt Git}
+\noindent [Insérer screenshot de la page du dépôt Git avec l'URL du repo]
+
+\noindent\textbf{Justification du choix GitHub / GitLab:} [À compléter]
+
+\subsubsection*{1.b Stratégie de branches Gitflow}
+\noindent [Insérer screenshot de la liste des branches (interface web ou \texttt{git branch -a})]
+
+\subsubsection*{1.c Fichier .gitignore}
+\begin{lstlisting}[language={},title=.gitignore]
+# A completer
+\end{lstlisting}
+
+\noindent\textbf{Justification des entrées:}
+\begin{itemize}
+    \item [À compléter -- justifier chaque entrée]
+\end{itemize}
+
+\subsubsection*{1.d Protection de la branche main}
+\noindent [Insérer screenshot des règles de protection de branche configurées]
+
+\subsection{Exercice 2 -- Workflow Git et résolution de conflits (12 points)}
+\subsubsection*{Prompt}
+\begin{longtable}{p{0.52\textwidth}p{0.2\textwidth}p{0.2\textwidth}}
+\toprule
+Prompt utilisé & Fournisseur & Modèle \\
+\midrule
+À compléter & [À compléter] & [À compléter] \\
+\bottomrule
+\end{longtable}
+
+\subsubsection*{2.a Branches parallèles et conflit}
+\noindent [Insérer screenshot du diff ou du message de conflit Git dans le terminal]
+
+\noindent [Insérer screenshot du fichier en conflit montrant les marqueurs \texttt{<<<<<<<}, \texttt{=======}, \texttt{>>>>>>>}]
+
+\subsubsection*{2.b Résolution du conflit}
+\noindent [Insérer screenshot du fichier après résolution du conflit]
+
+\noindent [Insérer screenshot du commit de merge réussi]
+
+\subsubsection*{2.c Merge vs Rebase}
+\noindent [À compléter -- définitions + cas d'usage recommandé pour chacun]
+
+\subsubsection*{2.d Conventional Commits}
+\noindent [Insérer screenshot de l'historique Git (\texttt{git log --oneline}) montrant au moins 5 commits respectant Conventional Commits]
+
+\noindent\textbf{Justification de la convention utilisée:} [À compléter]
+
+%% ============================================================
+\newpage
+\section{Partie 2 -- Conteneurisation Docker (25 points)}
+
+\subsection{Exercice 3 -- Dockerfile du back-end (10 points)}
+\subsubsection*{Prompt}
+\begin{longtable}{p{0.52\textwidth}p{0.2\textwidth}p{0.2\textwidth}}
+\toprule
+Prompt utilisé & Fournisseur & Modèle \\
+\midrule
+À compléter & [À compléter] & [À compléter] \\
+\bottomrule
+\end{longtable}
+
+\subsubsection*{3.a Dockerfile back-end (multi-stage)}
+\begin{lstlisting}[language={},title=backend/Dockerfile]
+# A completer
+\end{lstlisting}
+
+\noindent\textbf{Explication du multi-stage build:} [À compléter -- pourquoi 2 stages, intérêt de chacun]
+
+\noindent\textbf{Justification de l'image de base:} [À compléter -- pourquoi node:20-alpine et pas node:20]
+
+\subsubsection*{3.b Commentaire explicatif (en tête du Dockerfile)}
+\noindent [Déjà intégré dans le Dockerfile ci-dessus]
+
+\subsubsection*{3.c Fichier .dockerignore}
+\begin{lstlisting}[language={},title=.dockerignore]
+# A completer
+\end{lstlisting}
+
+\noindent\textbf{Justification des entrées:}
+\begin{itemize}
+    \item [À compléter -- justifier chaque entrée]
+\end{itemize}
+
+\noindent [Insérer screenshot du build réussi (\texttt{docker build}) montrant les étapes]
+
+\noindent [Insérer screenshot de \texttt{docker images} montrant la taille de l'image produite]
+
+\subsection{Exercice 4 -- Dockerfile du front-end (5 points)}
+\subsubsection*{Prompt}
+\begin{longtable}{p{0.52\textwidth}p{0.2\textwidth}p{0.2\textwidth}}
+\toprule
+Prompt utilisé & Fournisseur & Modèle \\
+\midrule
+À compléter & [À compléter] & [À compléter] \\
+\bottomrule
+\end{longtable}
+
+\subsubsection*{4.a Dockerfile front-end}
+\begin{lstlisting}[language={},title=frontend/Dockerfile]
+# A completer
+\end{lstlisting}
+
+\noindent\textbf{Justification de l'image Nginx utilisée:} [À compléter]
+
+\subsubsection*{4.b Fichier nginx.conf}
+\begin{lstlisting}[language={},title=frontend/nginx.conf]
+# A completer
+\end{lstlisting}
+
+\noindent\textbf{Explication du rôle du proxy\_pass:} [À compléter -- pourquoi les requêtes /api/* sont redirigées vers le back-end]
+
+\subsection{Exercice 5 -- Docker Compose (10 points)}
+\subsubsection*{Prompt}
+\begin{longtable}{p{0.52\textwidth}p{0.2\textwidth}p{0.2\textwidth}}
+\toprule
+Prompt utilisé & Fournisseur & Modèle \\
+\midrule
+À compléter & [À compléter] & [À compléter] \\
+\bottomrule
+\end{longtable}
+
+\subsubsection*{5.a Fichier docker-compose.yml}
+\begin{lstlisting}[language={},title=docker-compose.yml]
+# A completer
+\end{lstlisting}
+
+\subsubsection*{5.b Réseau personnalisé (bridge)}
+\noindent [À compléter -- pourquoi un bridge dédié, avantage par rapport au réseau par défaut]
+
+\subsubsection*{5.c Volume persistant}
+\noindent [À compléter -- qu'est-ce qui se passe si on fait \texttt{docker-compose down} sans volume]
+
+\subsubsection*{5.d Variables d'environnement}
+\begin{lstlisting}[language={},title=.env.example]
+# A completer
+\end{lstlisting}
+
+\noindent\textbf{Justification de chaque variable:}
+\begin{itemize}
+    \item [À compléter]
+\end{itemize}
+
+\subsubsection*{5.e Vérification}
+\noindent [Insérer screenshot de \texttt{docker-compose up} montrant le démarrage des 3 services]
+
+\noindent [Insérer screenshot de \texttt{docker ps} montrant les 3 conteneurs actifs avec leurs ports]
+
+%% ============================================================
+\newpage
+\section{Partie 3 -- Pipeline CI/CD (30 points)}
+
+\subsection{Exercice 6 -- Configuration de la pipeline (20 points)}
+\subsubsection*{Prompt}
+\begin{longtable}{p{0.52\textwidth}p{0.2\textwidth}p{0.2\textwidth}}
+\toprule
+Prompt utilisé & Fournisseur & Modèle \\
+\midrule
+À compléter & [À compléter] & [À compléter] \\
+\bottomrule
+\end{longtable}
+
+\noindent\textbf{Justification du choix GitHub Actions / GitLab CI:} [À compléter]
+
+\subsubsection*{6.a Fichier de pipeline}
+\begin{lstlisting}[language={},title=.github/workflows/ci.yml]
+# A completer
+\end{lstlisting}
+
+\subsubsection*{Étape 1 -- Lint \& Tests (6 pts)}
+\noindent\textbf{Explication:} [À compléter -- que fait cette étape, pourquoi]
+
+\noindent [Insérer screenshot des logs du lint et des tests]
+
+\subsubsection*{Étape 2 -- Build Docker (6 pts)}
+\noindent\textbf{Explication:} [À compléter -- que fait cette étape, pourquoi]
+
+\noindent\textbf{Justification du choix du registry:} [À compléter -- GHCR, Docker Hub ou GitLab Registry]
+
+\noindent\textbf{Explication du tag par SHA de commit:} [À compléter -- pourquoi c'est préférable à un tag « latest »]
+
+\noindent [Insérer screenshot des logs du build Docker]
+
+\subsubsection*{Étape 3 -- Déploiement staging (8 pts)}
+\noindent\textbf{Explication:} [À compléter -- que fait cette étape, pourquoi]
+
+\noindent\textbf{Explication du health check:} [À compléter -- comment il fonctionne, pourquoi il fait échouer la pipeline]
+
+\noindent [Insérer screenshot des logs du déploiement staging]
+
+\subsubsection*{Pipeline réussie}
+\noindent [Insérer screenshot de l'onglet Actions/Pipelines montrant au moins une exécution réussie]
+
+\noindent [Insérer screenshot détaillé de chaque étape de la pipeline]
+
+\subsection{Exercice 7 -- Gestion des secrets et déclencheurs (10 points)}
+\subsubsection*{Prompt}
+\begin{longtable}{p{0.52\textwidth}p{0.2\textwidth}p{0.2\textwidth}}
+\toprule
+Prompt utilisé & Fournisseur & Modèle \\
+\midrule
+À compléter & [À compléter] & [À compléter] \\
+\bottomrule
+\end{longtable}
+
+\subsubsection*{7.a Secrets configurés}
+\noindent [Insérer screenshot de la page de configuration des secrets (valeurs masquées)]
+
+\noindent\textbf{Liste des secrets et leur rôle:}
+\begin{itemize}
+    \item [À compléter -- ex: \texttt{DOCKER\_TOKEN} $\rightarrow$ accès au registry]
+\end{itemize}
+
+\subsubsection*{7.b Déclencheurs}
+\noindent [Insérer extrait du fichier de pipeline montrant la section \texttt{on:} avec les déclencheurs]
+
+\noindent\textbf{Justification des déclencheurs choisis:} [À compléter -- pourquoi push sur develop ET PR vers main]
+
+\subsubsection*{7.c Risques du stockage de secrets en clair}
+\noindent [À compléter -- au moins 2 risques concrets]
+
+%% ============================================================
+\newpage
+\section{Partie 4 -- Orchestration et supervision (15 points)}
+
+\subsection{Exercice 8 -- Manifestes Kubernetes (10 points)}
+\subsubsection*{Prompt}
+\begin{longtable}{p{0.52\textwidth}p{0.2\textwidth}p{0.2\textwidth}}
+\toprule
+Prompt utilisé & Fournisseur & Modèle \\
+\midrule
+À compléter & [À compléter] & [À compléter] \\
+\bottomrule
+\end{longtable}
+
+\subsubsection*{8.a Deployment back-end}
+\begin{lstlisting}[language={},title=k8s/deployment.yaml]
+# A completer
+\end{lstlisting}
+
+\noindent\textbf{Explication du rôle d'un Deployment:} [À compléter]
+
+\noindent\textbf{Justification du choix de 2 réplicas:} [À compléter -- pourquoi pas 1, pourquoi pas 3]
+
+\noindent\textbf{Explication de la liveness probe:} [À compléter -- à quoi elle sert, que se passe-t-il si elle échoue]
+
+\subsubsection*{8.b Service ClusterIP}
+\begin{lstlisting}[language={},title=k8s/service.yaml]
+# A completer
+\end{lstlisting}
+
+\noindent\textbf{Explication du rôle d'un Service:} [À compléter]
+
+\subsubsection*{8.c Ingress / NodePort / LoadBalancer}
+\begin{lstlisting}[language={},title=k8s/ingress.yaml]
+# A completer
+\end{lstlisting}
+
+\noindent\textbf{Explication du choix entre Ingress et NodePort/LoadBalancer:} [À compléter]
+
+\subsubsection*{8.d Secret Kubernetes}
+\begin{lstlisting}[language={},title=k8s/secret.yaml]
+# A completer
+\end{lstlisting}
+
+\noindent\textbf{Explication de l'injection du Secret dans le pod:} [À compléter -- envFrom ou env.valueFrom]
+
+\subsection{Exercice 9 -- Réflexion sur la supervision (5 points)}
+\subsubsection*{Prompt}
+\begin{longtable}{p{0.52\textwidth}p{0.2\textwidth}p{0.2\textwidth}}
+\toprule
+Prompt utilisé & Fournisseur & Modèle \\
+\midrule
+À compléter & [À compléter] & [À compléter] \\
+\bottomrule
+\end{longtable}
+
+\subsubsection*{9.a Supervision en production}
+\noindent\textbf{Outils choisis:}
+\begin{itemize}
+    \item [À compléter -- outil, rôle: collecte / stockage / visualisation / alerting]
+\end{itemize}
+
+\noindent\textbf{Métriques surveillées:}
+\begin{itemize}
+    \item [À compléter -- ex: CPU, mémoire, latence API, taux d'erreur 5xx, avec justification]
+\end{itemize}
+
+\noindent\textbf{Justification du choix des outils:} [À compléter]
+
+\subsubsection*{9.b Self-healing Kubernetes}
+\noindent [À compléter -- rôle du ReplicaSet, détection de panne, recréation du pod]
+
+%% ============================================================
+\newpage
+\section{Partie 5 -- Documentation (10 points)}
+
+\subsection{Exercice 10 -- README et documentation technique}
+\subsubsection*{Prompt}
+\begin{longtable}{p{0.52\textwidth}p{0.2\textwidth}p{0.2\textwidth}}
+\toprule
+Prompt utilisé & Fournisseur & Modèle \\
+\midrule
+À compléter & [À compléter] & [À compléter] \\
+\bottomrule
+\end{longtable}
+
+\subsubsection*{10.a Fichier README.md}
+\begin{lstlisting}[language={},title=README.md]
+# A completer
+\end{lstlisting}
+
+\subsubsection*{10.b Schéma d'architecture}
+\noindent [Insérer schéma d'architecture (Mermaid ou image)]
+
+\noindent\textbf{Justification des choix techniques:} [À compléter]
+
+%% ============================================================
+\section*{Checklist finale de rendu}
+\addcontentsline{toc}{section}{Checklist finale de rendu}
+\begin{itemize}
+    \item Page de garde présente (anonyme)
+    \item Sommaire présent
+    \item Parties 1 à 5 complétées
+    \item Captures d'écran intégrées dans le PDF
+    \item Fichiers de configuration intégrés dans le PDF
+    \item Justification explicite de chaque choix
+    \item Transparence IA documentée
+    \item Lien vers le dépôt Git inclus
+\end{itemize}
+
+\end{document}
